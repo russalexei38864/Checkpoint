@@ -7,8 +7,9 @@ namespace Checkpoint
     public class Плагин : BaseUnityPlugin
     {
         public static bool ВМоде => NetworkSystem.Instance.InRoom && NetworkSystem.Instance.GameModeString.Contains("MODDED");
-        private static bool правый_индекс, левый_индекс, телепорт_использован, инициализировано, включено;
+        private static bool левый_индекс, правый_индекс, телепорт_использован;
         private static GameObject чекпоинт;
+        private static bool инициализировано, включено;
 
         void Start() => GorillaTagger.OnPlayerSpawned(Инициализация);
 
@@ -26,17 +27,16 @@ namespace Checkpoint
 
         void Инициализация()
         {
-            if (инициализировано)
-                return;
+            if (инициализировано) return;
 
             чекпоинт = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            чекпоинт.transform.position = new Vector3(-66.8761f, 11.8781f, -82.3425f);
+            чекпоинт.transform.SetPositionAndRotation(new Vector3(-66.8761f, 11.8781f, -82.3425f), Quaternion.identity);
             чекпоинт.transform.localScale = Vector3.one * 0.2f;
             чекпоинт.name = "Чекпоинт";
             Destroy(чекпоинт.GetComponent<SphereCollider>());
-            ИзменитьЦвет(Color.green);
-            чекпоинт.SetActive(false);
 
+            ОбновитьЦвет(Color.green);
+            чекпоинт.SetActive(false);
             инициализировано = true;
         }
 
@@ -77,15 +77,14 @@ namespace Checkpoint
                 телепорт_использован = false;
             }
 
-            if (правый_индекс || левый_индекс) { ИзменитьЦвет(Color.red); }
-            else { ИзменитьЦвет(Color.green); }
+            ОбновитьЦвет(правый_индекс || левый_индекс ? Color.red : Color.green);
 
             чекпоинт.transform.rotation = GorillaLocomotion.Player.Instance.headCollider.transform.rotation;
         }
 
-        private static void ИзменитьЦвет(Color цвет)
+        private static void ОбновитьЦвет(Color цвет)
         {
-            if (чекпоинт?.GetComponent<Renderer>() is Renderer рендерер)
+            if (чекпоинт?.TryGetComponent(out Renderer рендерер) == true)
             {
                 рендерер.material.shader = Shader.Find("GorillaTag/UberShader");
                 рендерер.material.color = цвет;
