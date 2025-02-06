@@ -26,7 +26,8 @@ namespace Checkpoint
 
         void Инициализация()
         {
-            if (инициализировано) return;
+            if (инициализировано)
+                return;
 
             чекпоинт = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             чекпоинт.transform.position = new Vector3(-66.8761f, 11.8781f, -82.3425f);
@@ -70,13 +71,14 @@ namespace Checkpoint
             {
                 GorillaLocomotion.Player.Instance.TeleportTo(чекпоинт.transform);
                 телепорт_использован = true;
-                ИзменитьЦвет(Color.red);
             }
             else if (!правый_индекс)
             {
                 телепорт_использован = false;
-                ИзменитьЦвет(Color.green);
             }
+
+            if (правый_индекс || левый_индекс) { ИзменитьЦвет(Color.red); }
+            else { ИзменитьЦвет(Color.green); }
 
             чекпоинт.transform.rotation = GorillaLocomotion.Player.Instance.headCollider.transform.rotation;
         }
